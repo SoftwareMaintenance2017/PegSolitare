@@ -1,4 +1,4 @@
-package ps.api.model;
+package ps.engine.model;
 
 public class Hole {
 	private boolean enabled;

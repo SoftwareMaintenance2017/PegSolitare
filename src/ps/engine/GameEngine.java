@@ -1,10 +1,9 @@
-package ps.impl;
+package ps.engine;
 
-import ps.api.GameController;
-import ps.api.model.Board;
-import ps.api.model.Position;
+import ps.engine.model.Board;
+import ps.engine.model.Position;
 
-public class GameEngine implements GameController {
+public class GameEngine {
 
 	private Board board;
 	
@@ -12,20 +11,20 @@ public class GameEngine implements GameController {
 		this.newGame();
 	}
 	
-	@Override
+
 	public void newGame() {
 		board = new Board();
 
 	}
 
-	@Override
+
 	public void movePeg(Position originalPosition, Position finalPosition) {
 		board.getHoles()[originalPosition.getX()][originalPosition.getY()].setHasPeg(false);
 		board.getHoles()[finalPosition.getX()][finalPosition.getY()].setHasPeg(true);
 
 	}
 
-	@Override
+
 	public Board getBoard() {
 		return board;
 	}

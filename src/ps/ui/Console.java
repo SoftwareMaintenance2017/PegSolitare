@@ -1,26 +1,20 @@
 package ps.ui;
 
-import ps.api.GameController;
-import ps.api.model.Board;
-import ps.api.model.Hole;
-import ps.impl.GameEngine;
+import ps.engine.model.Board;
+import ps.engine.GameEngine;
+import ps.engine.model.Hole;
 
 public class Console {
 
-	private GameController game;
+	private GameEngine game;
 
 	public Console() {
 		game = new GameEngine();
 	}
 
-	public static void main(String[] args) {
-		
-		Console console = new Console();
-		console.play();
 
-	}
 
-	private void play() {
+	public void play() {
 		game.newGame();
 
 		printBoard(game.getBoard());
