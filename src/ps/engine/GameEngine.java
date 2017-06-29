@@ -1,6 +1,7 @@
 package ps.engine;
 
 import ps.engine.model.Board;
+import ps.engine.model.Hole;
 import ps.engine.model.Position;
 
 public class GameEngine {
@@ -30,8 +31,14 @@ public class GameEngine {
 	}
 
 	public boolean isOver() {
-		// TODO Auto-generated method stub
-		return false;
+		for (Hole[] row : board.getHoles()) {
+			for (Hole hole : row) {
+				if (hole.isHasPeg()) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 }

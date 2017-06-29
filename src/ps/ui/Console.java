@@ -26,6 +26,7 @@ public class Console {
 			makeMove();
 			printBoard(game.getBoard());
 		}
+		System.out.println("Game over!");
 
 	}
 
