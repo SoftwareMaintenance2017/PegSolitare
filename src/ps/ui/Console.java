@@ -1,8 +1,12 @@
 package ps.ui;
 
 import ps.engine.model.Board;
+
+import java.util.Scanner;
+
 import ps.engine.GameEngine;
 import ps.engine.model.Hole;
+import ps.engine.model.Position;
 
 public class Console {
 
@@ -16,10 +20,37 @@ public class Console {
 
 	public void play() {
 		game.newGame();
-
 		printBoard(game.getBoard());
+
+		while (!game.isOver()) {
+			makeMove();
+			printBoard(game.getBoard());
+		}
+
+	}
+
+	private void makeMove() {
+		Scanner sc = new Scanner(System.in);
+
+		Position originalPosition = new Position();
+
+		System.out.println("actual X:");
+		originalPosition.setX(sc.nextInt());
+		System.out.println("actual Y:");
+		originalPosition.setY(sc.nextInt());
+
+		Position finalPosition = new Position();
+
+		System.out.println("next X:");
+		finalPosition.setX(sc.nextInt());
+		System.out.println("next Y:");
+		finalPosition.setY(sc.nextInt());
+
+
+		game.movePeg(originalPosition, finalPosition);
 		
 	}
+
 
 	private void printBoard(Board board) {
 		System.out.println("Board: ");
@@ -34,7 +65,7 @@ public class Console {
 				} else {
 					System.out.print(" ");
 				}
-				System.out.print("-");
+				System.out.print(" ");
 			}
 			System.out.println();
 		}
