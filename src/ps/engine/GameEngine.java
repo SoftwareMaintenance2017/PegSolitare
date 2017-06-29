@@ -16,26 +16,9 @@ public class GameEngine {
 	public void newGame() {
 		board = new Board();
 
-		board.getHoles()[0][2].setEnabled(true);
-		board.getHoles()[0][3].setEnabled(true);
-		board.getHoles()[0][4].setEnabled(true);
-		board.getHoles()[1][2].setEnabled(true);
-		board.getHoles()[1][3].setEnabled(true);
-		board.getHoles()[1][4].setEnabled(true);
-
-		board.getHoles()[4][2].setEnabled(true);
-		board.getHoles()[3][3].setEnabled(true);
-		board.getHoles()[4][3].setEnabled(true);
-		board.getHoles()[5][3].setEnabled(true);
-		board.getHoles()[4][4].setEnabled(true);
-		board.getHoles()[4][5].setEnabled(true);
-
-		board.getHoles()[4][2].setHasPeg(true);
-		board.getHoles()[3][3].setHasPeg(true);
-		board.getHoles()[4][3].setHasPeg(true);
-		board.getHoles()[5][3].setHasPeg(true);
-		board.getHoles()[4][4].setHasPeg(true);
-		board.getHoles()[4][5].setHasPeg(true);
+		String[] latinCross = new String[] { "xx000xx", "xx010xx", "0011100", "0001000", "0001000",
+				"xx000xx", "xx000xx" };
+		board = BoardLoader.loadBoard(latinCross);
 
 	}
 
