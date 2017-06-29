@@ -16,6 +16,13 @@ public class GameEngine {
 	public void newGame() {
 		board = new Board();
 
+		board.getHoles()[0][2].setEnabled(true);
+		board.getHoles()[0][3].setEnabled(true);
+		board.getHoles()[0][4].setEnabled(true);
+		board.getHoles()[1][2].setEnabled(true);
+		board.getHoles()[1][3].setEnabled(true);
+		board.getHoles()[1][4].setEnabled(true);
+
 		board.getHoles()[4][2].setEnabled(true);
 		board.getHoles()[3][3].setEnabled(true);
 		board.getHoles()[4][3].setEnabled(true);

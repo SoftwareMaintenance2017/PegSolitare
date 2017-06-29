@@ -33,14 +33,14 @@ public class Board {
 				Hole hole = holes[x][y];
 				if (hole.isEnabled()) {
 					if (hole.isHasPeg()) {
-						string += "1";
+						string += "Y";
 					} else {
-						string += "0";
+						string += "O";
 					}
 				} else {
 					string += " ";
 				}
-				string += "_";
+				string += " ";
 			}
 			string += "\n";
 		}
