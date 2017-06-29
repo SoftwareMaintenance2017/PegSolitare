@@ -35,16 +35,16 @@ public class Console {
 
 		Position originalPosition = new Position();
 
-		System.out.println("actual X:");
+		System.out.println("actual row num:");
 		originalPosition.setX(sc.nextInt());
-		System.out.println("actual Y:");
+		System.out.println("actual column num:");
 		originalPosition.setY(sc.nextInt());
 
 		Position finalPosition = new Position();
 
-		System.out.println("next X:");
+		System.out.println("next row num:");
 		finalPosition.setX(sc.nextInt());
-		System.out.println("next Y:");
+		System.out.println("next column num:");
 		finalPosition.setY(sc.nextInt());
 
 
@@ -56,7 +56,16 @@ public class Console {
 	private void printBoard(Board board) {
 		System.out.println("Board: ");
 
+		System.out.print("  ");
+		for (int c = 0; c < board.getHoles().length; c++) {
+			System.out.print(c + " ");
+		}
+		System.out.println();
+
+		int r = 0;
+
 		for (Hole[] row : board.getHoles()) {
+			System.out.print((r++) + " ");
 			for (Hole hole : row) {
 				if (hole.isEnabled()) {
 					if (hole.isHasPeg()) {
@@ -65,9 +74,9 @@ public class Console {
 						System.out.print("O");
 					}
 				} else {
-					System.out.print("_");
+					System.out.print(" ");
 				}
-				System.out.print("-");
+				System.out.print(" ");
 			}
 			System.out.println();
 		}
