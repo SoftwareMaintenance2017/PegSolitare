@@ -1,10 +1,9 @@
-package ps.ui;
-
-import ps.engine.model.Board;
+package ps.ui.console;
 
 import java.util.Scanner;
 
 import ps.engine.GameEngine;
+import ps.engine.model.Board;
 import ps.engine.model.Hole;
 import ps.engine.model.Position;
 
@@ -35,53 +34,55 @@ public class Console {
 	    Scanner sc = new Scanner(System.in);
 	    Position originalPosition = new Position();
 
-	    System.out.println("actual row num:");
+			ConsoleWriter.println("actual row num:");
 	    originalPosition.setX(sc.nextInt());
-	    System.out.println("actual column num:");
+			ConsoleWriter.println("actual column num:");
 	    originalPosition.setY(sc.nextInt());
 
 	    Position finalPosition = new Position();
 
-	    System.out.println("next row num:");
+			ConsoleWriter.println("next row num:");
 	    finalPosition.setX(sc.nextInt());
-	    System.out.println("next column num:");
+			ConsoleWriter.println("next column num:");
 	    finalPosition.setY(sc.nextInt());
 
 	    game.movePeg(originalPosition, finalPosition);
 	    
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    System.out.println("\n\nMovement not valid, please try again");
+			ConsoleWriter.println("\n\nMovement not valid, please try again");
 	}
 
     }
 
-    private void printBoard(Board board) {
-	System.out.println("Board: ");
 
-	System.out.print("  ");
+
+	private void printBoard(Board board) {
+		ConsoleWriter.println("Board: ");
+
+		ConsoleWriter.print("  ");
 	for (int c = 0; c < board.getHoles().length; c++) {
-	    System.out.print(c + " ");
+			ConsoleWriter.print(c + " ");
 	}
-	System.out.println();
+		ConsoleWriter.println("");
 
 	int r = 0;
 
 	for (Hole[] row : board.getHoles()) {
-	    System.out.print((r++) + " ");
+			ConsoleWriter.print((r++) + " ");
 	    for (Hole hole : row) {
 		if (hole.isEnabled()) {
 		    if (hole.isHasPeg()) {
-			System.out.print("Y");
+						ConsoleWriter.print("Y");
 		    } else {
-			System.out.print("O");
+						ConsoleWriter.print("O");
 		    }
 		} else {
-		    System.out.print(" ");
+					ConsoleWriter.print(" ");
 		}
-		System.out.print(" ");
+				ConsoleWriter.print(" ");
 	    }
-	    System.out.println();
+			ConsoleWriter.println("");
 	}
 
     }
