@@ -24,4 +24,26 @@ public class Board {
 	public void setHoles(Hole[][] holes) {
 		this.holes = holes;
 	}
+
+	@Override
+	public String toString() {
+		String string = super.toString() + "\n";
+		for (int x = 0; x < DEFAULT_WIDTH; x++) {
+			for (int y = 0; y < DEFAULT_HEIGHT; y++) {
+				Hole hole = holes[x][y];
+				if (hole.isEnabled()) {
+					if (hole.isHasPeg()) {
+						string += "1";
+					} else {
+						string += "0";
+					}
+				} else {
+					string += " ";
+				}
+				string += "_";
+			}
+			string += "\n";
+		}
+		return string;
+	}
 }

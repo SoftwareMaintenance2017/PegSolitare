@@ -55,21 +55,7 @@ public class Console {
 
 	private void printBoard(Board board) {
 		System.out.println("Board: ");
-		for (Hole[] rows : board.getHoles()) {
-			for (Hole hole : rows) {
-				if (hole.isEnabled()) {
-					if (hole.isHasPeg()) {
-						System.out.print("1");
-					} else {
-						System.out.print("0");
-					}
-				} else {
-					System.out.print(" ");
-				}
-				System.out.print(" ");
-			}
-			System.out.println();
-		}
+		System.out.println(board);
 
 	}
 }
