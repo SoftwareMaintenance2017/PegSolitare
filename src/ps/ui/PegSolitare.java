@@ -1,11 +1,10 @@
 package ps.ui;
 
-import ps.ui.console.Console;
+import javafx.application.Application;
 
 public class PegSolitare {
 
 	public static void main(String[] args) {
-		Console console = new Console();
-		console.play();
+	    Application.launch(PegSolitaireApp.class);
 	}
 }

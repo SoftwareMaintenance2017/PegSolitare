@@ -1,10 +1,14 @@
 package ps.engine;
 
+import java.util.logging.Logger;
+
 import ps.engine.model.Board;
 import ps.engine.model.Hole;
 import ps.engine.model.Position;
 
 public class GameEngine {
+
+    private static final Logger LOGGER = Logger.getLogger(GameEngine.class.getName());
 
     private Board board;
 
@@ -32,47 +36,57 @@ public class GameEngine {
     }
 
     private boolean validateMovement(Position originalPosition, Position finalPosition) {
-
 	try {
-	    
-	    if (!board.getHoles()[originalPosition.getX()][originalPosition.getY()].isHasPeg()) {
-		System.out.println("No peg in actual position");
-		return false;
-	    }
-	    
-	    if (board.getHoles()[finalPosition.getX()][finalPosition.getY()].isHasPeg()) {
-		System.out.println("There must be no peg in final position");
-		return false;
-	    }
+	    Hole originalHole = board.getHoles()[originalPosition.getX()][originalPosition.getY()];
+	    Hole finalHole = board.getHoles()[finalPosition.getX()][finalPosition.getY()];
 
-	    if (!board.getHoles()[originalPosition.getX()][originalPosition.getY()].isEnabled() || !board.getHoles()[finalPosition.getX()][finalPosition.getY()].isEnabled()) {
-		System.out.println("Displacement outside board valid space");
-		return false;
-	    }
+	    boolean valid = checkOriginalHole(originalHole);
+	    valid = valid && checkFinalHole(finalHole);
+	    valid = valid && checkCoherentMovement(originalPosition, finalPosition);
+	    valid = valid && checkValidMovement(originalPosition, finalPosition);
 
-	    int xDisplacement = Math.abs(originalPosition.getX() - finalPosition.getX());
-	    int yDisplacement = Math.abs(originalPosition.getY() - finalPosition.getY());
-	    if (!(xDisplacement == 0 && yDisplacement == 2) && !(xDisplacement == 2 && yDisplacement == 0)) {
-		System.out.println("Invalid displacement");
-		return false;
-	    }
-
-	    int midHoleXPosition = (originalPosition.getX() + finalPosition.getX()) / 2;
-	    int midHoleYPosition = (originalPosition.getY() + finalPosition.getY()) / 2;
-	    Hole midHole = board.getHoles()[midHoleXPosition][midHoleYPosition];
-	    if (midHole.isHasPeg()) {
-		midHole.setHasPeg(false);
-	    } else {
-		System.out.println("There's no peg to remove, invalid movement");
-		return false;
-	    }
-
-	    return true;
+	    return valid;
 	} catch (Exception e) {
-	    System.out.println("Invalid movement (error validating)");
+	    LOGGER.info("Invalid movement (error validating)");
 	    return false;
 	}
+    }
 
+    private boolean checkValidMovement(Position originalPosition, Position finalPosition) {
+	int midHoleXPosition = (originalPosition.getX() + finalPosition.getX()) / 2;
+	int midHoleYPosition = (originalPosition.getY() + finalPosition.getY()) / 2;
+	Hole midHole = board.getHoles()[midHoleXPosition][midHoleYPosition];
+	if (midHole.isHasPeg()) {
+	    midHole.setHasPeg(false);
+	    return true;
+	} else {
+	    LOGGER.info("There's no peg to remove, invalid movement");
+	    return false;
+	}
+    }
+
+    private boolean checkCoherentMovement(Position originalPosition, Position finalPosition) {
+	int xDisplacement = Math.abs(originalPosition.getX() - finalPosition.getX());
+	int yDisplacement = Math.abs(originalPosition.getY() - finalPosition.getY());
+	if ((xDisplacement == 0 && yDisplacement == 2) || (xDisplacement == 2 && yDisplacement == 0))
+	    return true;
+	LOGGER.info("Invalid displacement");
+	return false;
+
+    }
+
+    private boolean checkOriginalHole(Hole originalHole) {
+	if (originalHole.isHasPeg() && originalHole.isEnabled())
+	    return true;
+	LOGGER.info("Disabled or no peg in first position");
+	return false;
+    }
+
+    private boolean checkFinalHole(Hole finalHole) {
+	if (!finalHole.isHasPeg() && finalHole.isEnabled())
+	    return true;
+	LOGGER.info("Disabled or peg in final position");
+	return false;
     }
 
     public Board getBoard() {

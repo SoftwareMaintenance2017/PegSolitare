@@ -1,11 +1,7 @@
 package ps.ui;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Logger;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -18,43 +14,44 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import ps.engine.GameEngine;
 import ps.engine.model.Position;
 
 public class PegSolitaireApp extends Application {
 
+    private static final Logger LOGGER = Logger.getLogger(PegSolitaireApp.class.getName());
+
     private GameEngine game;
-    private Tile[][] tilesBoard = new Tile[7][7];
+    private BoardTile[][] tilesBoard = new BoardTile[7][7];
     private Pane root = new Pane();
 
-    private Tile initialPosition;
-    private Tile finalPosition;
+    private BoardTile initialPosition;
+    private BoardTile finalPosition;
 
     private Parent createContent() {
 	root.setPrefSize(700, 700);
 	game = new GameEngine();
 
+	LOGGER.info("Drawing board");
 	for (int i = 0; i < 7; i++) {
 	    for (int j = 0; j < 7; j++) {
-		Tile tile = new Tile();
-		tile.setTranslateX(j * 100);
-		tile.setTranslateY(i * 100);
-		tile.getPosition().setX(j);
-		tile.getPosition().setY(i);
+		BoardTile tile = new BoardTile();
+		tile.setTranslateX(i * 100);
+		tile.setTranslateY(j * 100);
+		tile.getPosition().setX(i);
+		tile.getPosition().setY(j);
 		root.getChildren().add(tile);
-		if (game.getBoard().getHoles()[j][i].isEnabled())
-		    if (game.getBoard().getHoles()[j][i].isHasPeg())
-			tile.drawO(Color.BLUEVIOLET);
+		if (game.getBoard().getHoles()[i][j].isEnabled())
+		    if (game.getBoard().getHoles()[i][j].isHasPeg())
+			tile.fill(Color.BLUEVIOLET);
 		    else
-			tile.drawO();
-		tilesBoard[j][i] = tile;
+			tile.fill();
+		tilesBoard[i][j] = tile;
 	    }
 	}
 
@@ -67,13 +64,15 @@ public class PegSolitaireApp extends Application {
 	primaryStage.show();
     }
 
-    private void checkMove() {
+    private void checkCurrentMove() {
+	LOGGER.info("Updating board with new move");
 	game.movePeg(initialPosition.getPosition(), finalPosition.getPosition());
 	redrawMap();
 	initialPosition = null;
 	finalPosition = null;
 
 	if (game.isOver()) {
+	    LOGGER.info("GAME OVER");
 	    Stage dialogStage = new Stage();
 	    dialogStage.initModality(Modality.WINDOW_MODAL);
 
@@ -84,9 +83,7 @@ public class PegSolitaireApp extends Application {
 
 	    restartButton.setOnAction(actionEvent -> {
 		game = new GameEngine();
-		Platform.runLater(() -> {
-		    redrawMap();
-		});
+		Platform.runLater(this::redrawMap);
 		dialogStage.close();
 	    });
 
@@ -99,36 +96,21 @@ public class PegSolitaireApp extends Application {
     private void redrawMap() {
 	for (int i = 0; i < 7; i++) {
 	    for (int j = 0; j < 7; j++) {
-		final Tile tile = tilesBoard[j][i];
-		if (game.getBoard().getHoles()[j][i].isEnabled())
-		    if (game.getBoard().getHoles()[j][i].isHasPeg())
-			tile.drawO(Color.BLUEVIOLET);
+		final BoardTile tile = tilesBoard[i][j];
+		if (game.getBoard().getHoles()[i][j].isEnabled())
+		    if (game.getBoard().getHoles()[i][j].isHasPeg())
+			tile.fill(Color.BLUEVIOLET);
 		    else
-			tile.drawO();
+			tile.fill();
 	    }
 	}
     }
 
-    private class Combo {
-	private Tile[] tiles;
-
-	public Combo(Tile... tiles) {
-	    this.tiles = tiles;
-	}
-
-	public boolean isComplete() {
-	    if (tiles[0].getValue().isEmpty())
-		return false;
-
-	    return tiles[0].getValue().equals(tiles[1].getValue()) && tiles[0].getValue().equals(tiles[2].getValue());
-	}
-    }
-
-    private class Tile extends StackPane {
+    private class BoardTile extends StackPane {
 	private Text text = new Text();
 	private Position position = new Position();
 
-	public Tile() {
+	public BoardTile() {
 	    Rectangle border = new Rectangle(100, 100);
 	    border.setFill(null);
 	    border.setStroke(Color.BLACK);
@@ -139,35 +121,23 @@ public class PegSolitaireApp extends Application {
 		if (event.getButton() == MouseButton.PRIMARY) {
 		    if (!game.getBoard().getHoles()[position.getX()][position.getY()].isEnabled())
 			return;
-		    drawO(Color.RED);
+		    fill(Color.RED);
 		    if (initialPosition == null)
 			initialPosition = this;
 		    else {
 			finalPosition = this;
-			checkMove();
+			checkCurrentMove();
 		    }
 		}
 	    });
 	}
 
-	public double getCenterX() {
-	    return getTranslateX() + 100;
-	}
-
-	public double getCenterY() {
-	    return getTranslateY() + 100;
-	}
-
-	public String getValue() {
-	    return text.getText();
-	}
-
-	public void drawO() {
+	public void fill() {
 	    text.setFill(Color.BLACK);
 	    text.setText("O");
 	}
 
-	public void drawO(Color color) {
+	public void fill(Color color) {
 	    text.setFill(color);
 	    text.setText("O");
 	}
@@ -178,31 +148,11 @@ public class PegSolitaireApp extends Application {
 
     }
 
-    public static void main(String[] args) {
-	launch(args);
-    }
-
     public GameEngine getGame() {
 	return game;
     }
 
     public void setGame(GameEngine game) {
 	this.game = game;
-    }
-
-    private Tile getInitialPosition() {
-	return initialPosition;
-    }
-
-    private void setInitialPosition(Tile initialPosition) {
-	this.initialPosition = initialPosition;
-    }
-
-    private Tile getFinalPosition() {
-	return finalPosition;
-    }
-
-    private void setFinalPosition(Tile finalPosition) {
-	this.finalPosition = finalPosition;
     }
 }
