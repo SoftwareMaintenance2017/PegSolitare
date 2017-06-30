@@ -1,7 +1,14 @@
 package ps.engine;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 import ps.engine.model.Board;
 import ps.engine.model.Hole;
+import ps.engine.util.ResourceLoader;
 
 public class BoardLoader {
 
@@ -33,6 +40,33 @@ public class BoardLoader {
 		}
 
 		return board;
+	}
+
+	/**
+	 * Create a board from a pre-build board.
+	 * 
+	 * @param prebuildBoard
+	 * @return
+	 */
+	public static Board loadBoard(PrebuildBoard prebuildBoard) {
+		File boardFile = ResourceLoader.getSavedFile(prebuildBoard.getFile());
+		try (Scanner scanner = new Scanner(boardFile)) {
+
+			List<String> result = new ArrayList<>();
+
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				result.add(line);
+			}
+
+			scanner.close();
+
+			return loadBoard(result.toArray(new String[result.size()]));
+
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 }

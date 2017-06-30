@@ -22,8 +22,7 @@ public class GameEngine {
     public void newGame() {
 	board = new Board();
 
-	String[] latinCross = new String[] { "xx000xx", "xx010xx", "0011100", "0001000", "0001000", "xx000xx", "xx000xx" };
-	board = BoardLoader.loadBoard(latinCross);
+		board = BoardLoader.loadBoard(PrebuildBoard.LATIN_CROSS);
 
     }
 
