@@ -1,9 +1,12 @@
 package ps.engine;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 import ps.engine.model.Board;
 import ps.engine.model.Hole;
+import ps.engine.model.PegMove;
 import ps.engine.model.Position;
 
 public class GameEngine {
@@ -102,7 +105,26 @@ public class GameEngine {
 		}
 	    }
 	}
-	return pegs == 1;
-    }
+
+	
+		return pegs == 1;
+	}
+
+	/**
+	 * Undo the last peg move.
+	 */
+	public void undoMove() {
+		
+	}
+
+	/**
+	 * Get the list of all peg moves done during the session game.
+	 * 
+	 * @return the peg move list
+	 * @see PegMove
+	 */
+	public List<PegMove> moveHistory() {
+		return Collections.emptyList();
+	}
 
 }
