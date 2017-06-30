@@ -8,6 +8,7 @@ public class BoardLoader {
 	private BoardLoader() {
 	}
 
+
 	public static Board loadBoard(String[] savedBoard) {
 		Board board = new Board();
 
