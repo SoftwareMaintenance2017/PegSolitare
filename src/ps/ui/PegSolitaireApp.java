@@ -10,32 +10,27 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ps.engine.GameEngine;
 import ps.engine.model.PegMove;
-import ps.engine.model.Position;
 
 public class PegSolitaireApp extends Application {
 
     private static final Logger LOGGER = Logger.getLogger(PegSolitaireApp.class.getName());
 
-    private static final int TILE_SIZE = 80;
+    static final int TILE_SIZE = 80;
 
-    private GameEngine game;
+    GameEngine game;
     private BoardTile[][] tilesBoard = new BoardTile[7][7];
     private Pane root = new Pane();
 
-    private BoardTile initialPosition;
-    private BoardTile finalPosition;
+    BoardTile initialPosition;
+    BoardTile finalPosition;
 
     private Label printArea;
 
@@ -95,7 +90,7 @@ public class PegSolitaireApp extends Application {
     private void createBoardTiles() {
 	for (int i = 0; i < 7; i++) {
 	    for (int j = 0; j < 7; j++) {
-		BoardTile tile = new BoardTile();
+		BoardTile tile = new BoardTile(this);
 		tile.setTranslateX((j + 1) * TILE_SIZE);
 		tile.setTranslateY((i + 1) * TILE_SIZE);
 		tile.getPosition().setX(i);
@@ -113,13 +108,13 @@ public class PegSolitaireApp extends Application {
 
     private void createPositionsIndexes() {
 	for (int i = 0; i < 7; i++) {
-	    BoardTile hTile = new BoardTile();
+	    BoardTile hTile = new BoardTile(this);
 	    hTile.setTranslateX((i + 1) * TILE_SIZE);
 	    hTile.setTranslateY(0);
 	    hTile.fill(String.valueOf(i), Color.AQUAMARINE);
 	    hTile.getBoardBorder().setStroke(Color.WHITE);
 
-	    BoardTile vTile = new BoardTile();
+	    BoardTile vTile = new BoardTile(this);
 	    vTile.setTranslateX(0 * TILE_SIZE);
 	    vTile.setTranslateY((i + 1) * TILE_SIZE);
 	    vTile.fill(String.valueOf(i), Color.AQUAMARINE);
@@ -142,7 +137,7 @@ public class PegSolitaireApp extends Application {
 	primaryStage.show();
     }
 
-    private void validateMove() {
+    void validateMove() {
 	LOGGER.info("Updating board with new move");
 	game.movePeg(initialPosition.getPosition(), finalPosition.getPosition());
 	redrawMap();
@@ -195,58 +190,6 @@ public class PegSolitaireApp extends Application {
 			tile.fill();
 	    }
 	}
-    }
-
-    private class BoardTile extends StackPane {
-	private Text text = new Text();
-	private Position position = new Position();
-	private Rectangle boardBorder;
-
-	public BoardTile() {
-	    boardBorder = new Rectangle(TILE_SIZE, TILE_SIZE);
-	    boardBorder.setFill(null);
-	    boardBorder.setStroke(Color.BLACK);
-	    text.setFont(Font.font(72 * TILE_SIZE / 100));
-	    setAlignment(Pos.CENTER);
-	    getChildren().addAll(boardBorder, text);
-	    setOnMouseClicked(event -> {
-		if (event.getButton() == MouseButton.PRIMARY) {
-		    if (!game.getBoard().getHoles()[position.getX()][position.getY()].isEnabled())
-			return;
-		    fill(Color.RED);
-		    if (initialPosition == null)
-			initialPosition = this;
-		    else {
-			finalPosition = this;
-			validateMove();
-		    }
-		}
-	    });
-	}
-
-	public void fill() {
-	    text.setFill(Color.BLACK);
-	    text.setText("O");
-	}
-
-	public void fill(Color color) {
-	    text.setFill(color);
-	    text.setText("O");
-	}
-
-	public void fill(String tileText, Color color) {
-	    text.setFill(color);
-	    text.setText(tileText);
-	}
-
-	private Position getPosition() {
-	    return position;
-	}
-
-	private Rectangle getBoardBorder() {
-	    return boardBorder;
-	}
-
     }
 
     public GameEngine getGame() {
