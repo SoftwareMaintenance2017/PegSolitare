@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import ps.engine.model.Board;
 import ps.engine.model.Hole;
+import ps.engine.util.PegSolitareException;
 import ps.engine.util.ResourceLoader;
 
 public class BoardLoader {
@@ -64,7 +65,7 @@ public class BoardLoader {
 			return loadBoard(result.toArray(new String[result.size()]));
 
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new PegSolitareException(e);
 		}
 
 	}

@@ -27,23 +27,23 @@ public class Board {
 
 	@Override
 	public String toString() {
-		String string = super.toString() + "\n";
+		StringBuilder string = new StringBuilder();
 		for (int x = 0; x < DEFAULT_WIDTH; x++) {
 			for (int y = 0; y < DEFAULT_HEIGHT; y++) {
 				Hole hole = holes[x][y];
 				if (hole.isEnabled()) {
 					if (hole.isHasPeg()) {
-						string += "Y";
+						string.append("Y");
 					} else {
-						string += "O";
+						string.append("O");
 					}
 				} else {
-					string += " ";
+					string.append(" ");
 				}
-				string += " ";
+				string.append(" ");
 			}
-			string += "\n";
+			string.append("\n");
 		}
-		return string;
+		return string.toString();
 	}
 }
