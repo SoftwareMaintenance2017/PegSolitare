@@ -37,8 +37,8 @@ public class GameEngine {
 	if (!validMovement)
 	    return;
 
-	board.getHoles()[originalPosition.getX()][originalPosition.getY()].setHasPeg(false);
-	board.getHoles()[finalPosition.getX()][finalPosition.getY()].setHasPeg(true);
+	board.getHoles()[originalPosition.getRow()][originalPosition.getColumn()].setHasPeg(false);
+	board.getHoles()[finalPosition.getRow()][finalPosition.getColumn()].setHasPeg(true);
 
 	if (!moveHistory.isEmpty() && moveHistory.get(moveHistory.size() - 1).getLastPosition().equals(originalPosition)) {
 	    moveHistory.get(moveHistory.size() - 1).getPositions().add(finalPosition);
@@ -54,8 +54,8 @@ public class GameEngine {
 
     private boolean validateMovement(Position originalPosition, Position finalPosition) {
 	try {
-	    Hole originalHole = board.getHoles()[originalPosition.getX()][originalPosition.getY()];
-	    Hole finalHole = board.getHoles()[finalPosition.getX()][finalPosition.getY()];
+	    Hole originalHole = board.getHoles()[originalPosition.getRow()][originalPosition.getColumn()];
+	    Hole finalHole = board.getHoles()[finalPosition.getRow()][finalPosition.getColumn()];
 
 	    boolean valid = checkOriginalHole(originalHole);
 	    valid = valid && checkFinalHole(finalHole);
@@ -70,8 +70,8 @@ public class GameEngine {
     }
 
     private boolean checkValidMovement(Position originalPosition, Position finalPosition) {
-	int midHoleXPosition = (originalPosition.getX() + finalPosition.getX()) / 2;
-	int midHoleYPosition = (originalPosition.getY() + finalPosition.getY()) / 2;
+	int midHoleXPosition = (originalPosition.getRow() + finalPosition.getRow()) / 2;
+	int midHoleYPosition = (originalPosition.getColumn() + finalPosition.getColumn()) / 2;
 	Hole midHole = board.getHoles()[midHoleXPosition][midHoleYPosition];
 	if (midHole.hasPeg()) {
 	    midHole.setHasPeg(false);
@@ -83,8 +83,8 @@ public class GameEngine {
     }
 
     private boolean checkCoherentMovement(Position originalPosition, Position finalPosition) {
-	int xDisplacement = Math.abs(originalPosition.getX() - finalPosition.getX());
-	int yDisplacement = Math.abs(originalPosition.getY() - finalPosition.getY());
+	int xDisplacement = Math.abs(originalPosition.getRow() - finalPosition.getRow());
+	int yDisplacement = Math.abs(originalPosition.getColumn() - finalPosition.getColumn());
 	if ((xDisplacement == 0 && yDisplacement == 2) || (xDisplacement == 2 && yDisplacement == 0))
 	    return true;
 	LOGGER.info("Invalid displacement");
@@ -134,13 +134,13 @@ public class GameEngine {
 	Position firstPosition = lastMove.getPositions().get(0);
 	Position lastPosition;
 
-	board.getHoles()[firstPosition.getX()][firstPosition.getY()].setHasPeg(true);
+	board.getHoles()[firstPosition.getRow()][firstPosition.getColumn()].setHasPeg(true);
 	LOGGER.info("Undoing move " + lastMove);
 	for (int i = 1; i < lastMove.getPositions().size(); i++) {
 	    lastPosition = lastMove.getPositions().get(i);
-	    board.getHoles()[lastPosition.getX()][lastPosition.getY()].setHasPeg(false);
-	    int midHoleXPosition = (firstPosition.getX() + lastPosition.getX()) / 2;
-	    int midHoleYPosition = (firstPosition.getY() + lastPosition.getY()) / 2;
+	    board.getHoles()[lastPosition.getRow()][lastPosition.getColumn()].setHasPeg(false);
+	    int midHoleXPosition = (firstPosition.getRow() + lastPosition.getRow()) / 2;
+	    int midHoleYPosition = (firstPosition.getColumn() + lastPosition.getColumn()) / 2;
 	    board.getHoles()[midHoleXPosition][midHoleYPosition].setHasPeg(true);
 	    firstPosition = lastPosition;
 	}

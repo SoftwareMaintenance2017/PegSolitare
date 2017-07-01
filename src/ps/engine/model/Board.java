@@ -2,6 +2,7 @@ package ps.engine.model;
 
 public class Board {
 
+	private static final String SPACE = " ";
 	private static final int DEFAULT_WIDTH = 7;
 	private static final int DEFAULT_HEIGHT = 7;
 
@@ -28,16 +29,25 @@ public class Board {
 	 * @return
 	 */
 	public Hole getHole(Position position) {
-		return holes[position.getX()][position.getY()];
+		return holes[position.getRow()][position.getColumn()];
 	}
 
 
 	@Override
 	public String toString() {
 		StringBuilder string = new StringBuilder();
-		for (int x = 0; x < DEFAULT_WIDTH; x++) {
-			for (int y = 0; y < DEFAULT_HEIGHT; y++) {
-				Hole hole = holes[x][y];
+
+		string.append("  ");
+
+		for (int x = 0; x < holes[0].length; x++) {
+			string.append(x).append(SPACE);
+		}
+		string.append("\n");
+
+		for (int row = 0; row < holes.length; row++) {
+			string.append(row).append(SPACE);
+			for (int column = 0; column < holes[row].length; column++) {
+				Hole hole = holes[row][column];
 				if (hole.isEnabled()) {
 					if (hole.hasPeg()) {
 						string.append("Y");
@@ -45,9 +55,9 @@ public class Board {
 						string.append("O");
 					}
 				} else {
-					string.append(" ");
+					string.append(SPACE);
 				}
-				string.append(" ");
+				string.append(SPACE);
 			}
 			string.append("\n");
 		}

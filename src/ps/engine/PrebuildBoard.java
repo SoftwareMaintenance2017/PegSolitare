@@ -10,7 +10,8 @@ package ps.engine;
 public enum PrebuildBoard {
 	
 	LATIN_CROSS("latinCross.board"),
-	GAME_OVER("gameOver.board");
+	GAME_OVER("gameOver.board"),
+	PYRAMID("Pyramid.board");
 
 	private String file;
 

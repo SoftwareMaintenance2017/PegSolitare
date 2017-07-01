@@ -8,6 +8,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.logging.Logger;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,6 +20,8 @@ import ps.engine.model.Position;
  *
  */
 public class GameEngineTest {
+
+	private static Logger LOGGER = Logger.getLogger(GameEngineTest.class.getName());
 
 	private GameEngine game;
 
@@ -53,16 +57,45 @@ public class GameEngineTest {
 		game.newGame(PrebuildBoard.LATIN_CROSS);
 
 		Position initialPosition = new Position(3, 3);
-		Position middlePosition = new Position(4, 3);
+		Position removedPegPosition = new Position(4, 3);
 		Position finalPosition = new Position(5, 3);
 		game.movePeg(initialPosition, finalPosition);
 
 		assertTrue(game.getBoard().getHole(initialPosition).isEnabled());
-		assertTrue(game.getBoard().getHole(middlePosition).isEnabled());
+		assertTrue(game.getBoard().getHole(removedPegPosition).isEnabled());
 		assertTrue(game.getBoard().getHole(finalPosition).isEnabled());
 
 		assertFalse(game.getBoard().getHole(initialPosition).hasPeg());
-		assertFalse(game.getBoard().getHole(middlePosition).hasPeg());
+		assertFalse(game.getBoard().getHole(removedPegPosition).hasPeg());
+		assertTrue(game.getBoard().getHole(finalPosition).hasPeg());
+
+	}
+
+	/**
+	 * Test method for
+	 * {@link ps.engine.GameEngine#movePeg(ps.engine.model.Position, ps.engine.model.Position)}.
+	 */
+	@Test
+	public final void testMovePegPyramid() {
+		game.newGame(PrebuildBoard.PYRAMID);
+
+		Position initialPosition = new Position(3, 2);
+		Position firtRemovedPeg = new Position(2, 2);
+		Position middlePosition = new Position(1, 2);
+		Position secondRemovedPeg = new Position(1, 3);
+		Position finalPosition = new Position(1, 4);
+
+		game.movePeg(initialPosition, middlePosition);
+		game.movePeg(middlePosition, finalPosition);
+
+		LOGGER.info("\n" + game.getBoard().toString());
+
+		assertTrue(game.getBoard().getHole(initialPosition).isEnabled());
+		assertTrue(game.getBoard().getHole(firtRemovedPeg).isEnabled());
+		assertTrue(game.getBoard().getHole(finalPosition).isEnabled());
+
+		assertFalse(game.getBoard().getHole(initialPosition).hasPeg());
+		assertFalse(game.getBoard().getHole(firtRemovedPeg).hasPeg());
 		assertTrue(game.getBoard().getHole(finalPosition).hasPeg());
 
 	}

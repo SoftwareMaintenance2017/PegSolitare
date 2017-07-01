@@ -4,27 +4,25 @@ import java.util.Objects;
 
 public class Position {
 
-    private int x;
-    private int y;
+    private int row;
+    private int column;
 
-	public Position(int x, int y) {
-		this.x = x;
-		this.y = y;
+	public Position(int row, int column) {
+		this.row = row;
+		this.column = column;
 	}
 
-	public int getY() {
-	return y;
+	public int getColumn() {
+	return column;
     }
 
-
-
-    public int getX() {
-	return x;
+    public int getRow() {
+	return row;
     }
 
     @Override
     public String toString() {
-	return "[" + x + "," + y + "]";
+	return "[" + row + "," + column + "]";
     }
 
     @Override
@@ -36,12 +34,12 @@ public class Position {
 			return false;
 		}
 		Position position = (Position) other;
-		return Objects.equals(this.x, position.x) && Objects.equals(this.y, position.y);
+		return Objects.equals(this.row, position.row) && Objects.equals(this.column, position.column);
     }
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(x, y);
+		return Objects.hash(row, column);
 	}
 
 }

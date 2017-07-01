@@ -28,7 +28,7 @@ private Rectangle boardBorder;
     getChildren().addAll(boardBorder, text);
     setOnMouseClicked(event -> {
 	if (event.getButton() == MouseButton.PRIMARY) {
-	    if (!this.pegSolitaireApp.game.getBoard().getHoles()[position.getX()][position.getY()].isEnabled())
+	    if (!this.pegSolitaireApp.game.getBoard().getHoles()[position.getRow()][position.getColumn()].isEnabled())
 		return;
 	    fill(Color.RED);
 	    if (this.pegSolitaireApp.initialPosition == null)
