@@ -51,10 +51,20 @@ public class GameEngineTest {
 	@Test
 	public final void testMovePeg() {
 		game.newGame(PrebuildBoard.LATIN_CROSS);
-		Position originalPosition = new Position(3, 3);
+
+		Position initialPosition = new Position(3, 3);
+		Position middlePosition = new Position(4, 3);
 		Position finalPosition = new Position(5, 3);
-		game.movePeg(originalPosition, finalPosition);
-		fail("Not yet implemented"); // TODO
+		game.movePeg(initialPosition, finalPosition);
+
+		assertTrue(game.getBoard().getHole(initialPosition).isEnabled());
+		assertTrue(game.getBoard().getHole(middlePosition).isEnabled());
+		assertTrue(game.getBoard().getHole(finalPosition).isEnabled());
+
+		assertFalse(game.getBoard().getHole(initialPosition).hasPeg());
+		assertFalse(game.getBoard().getHole(middlePosition).hasPeg());
+		assertTrue(game.getBoard().getHole(finalPosition).hasPeg());
+
 	}
 
 	/**

@@ -12,7 +12,7 @@ public class Board {
 
 		for (int x = 0; x < DEFAULT_WIDTH; x++) {
 			for (int y = 0; y < DEFAULT_HEIGHT; y++) {
-				holes[x][y] = new Hole();
+				holes[x][y] = new Hole(false, false);
 			}
 		}
 	}
@@ -21,9 +21,16 @@ public class Board {
 		return holes;
 	}
 
-	public void setHoles(Hole[][] holes) {
-		this.holes = holes;
+	/**
+	 * Get the hole object for the given position.
+	 * 
+	 * @param position
+	 * @return
+	 */
+	public Hole getHole(Position position) {
+		return holes[position.getX()][position.getY()];
 	}
+
 
 	@Override
 	public String toString() {
@@ -32,7 +39,7 @@ public class Board {
 			for (int y = 0; y < DEFAULT_HEIGHT; y++) {
 				Hole hole = holes[x][y];
 				if (hole.isEnabled()) {
-					if (hole.isHasPeg()) {
+					if (hole.hasPeg()) {
 						string.append("Y");
 					} else {
 						string.append("O");

@@ -73,7 +73,7 @@ public class GameEngine {
 	int midHoleXPosition = (originalPosition.getX() + finalPosition.getX()) / 2;
 	int midHoleYPosition = (originalPosition.getY() + finalPosition.getY()) / 2;
 	Hole midHole = board.getHoles()[midHoleXPosition][midHoleYPosition];
-	if (midHole.isHasPeg()) {
+	if (midHole.hasPeg()) {
 	    midHole.setHasPeg(false);
 	    return true;
 	} else {
@@ -93,14 +93,14 @@ public class GameEngine {
     }
 
     private boolean checkOriginalHole(Hole originalHole) {
-	if (originalHole.isHasPeg() && originalHole.isEnabled())
+	if (originalHole.hasPeg() && originalHole.isEnabled())
 	    return true;
 	LOGGER.info("Disabled or no peg in first position");
 	return false;
     }
 
     private boolean checkFinalHole(Hole finalHole) {
-	if (!finalHole.isHasPeg() && finalHole.isEnabled())
+	if (!finalHole.hasPeg() && finalHole.isEnabled())
 	    return true;
 	LOGGER.info("Disabled or peg in final position");
 	return false;
@@ -114,7 +114,7 @@ public class GameEngine {
 	int pegs = 0;
 	for (Hole[] row : board.getHoles()) {
 	    for (Hole hole : row) {
-		if (hole.isHasPeg()) {
+		if (hole.hasPeg()) {
 		    pegs++;
 		}
 	    }

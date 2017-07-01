@@ -96,7 +96,7 @@ public class PegSolitaireApp extends Application {
 
 		root.getChildren().add(tile);
 		if (game.getBoard().getHoles()[i][j].isEnabled())
-		    if (game.getBoard().getHoles()[i][j].isHasPeg())
+		    if (game.getBoard().getHoles()[i][j].hasPeg())
 			tile.fill(Color.BLUEVIOLET);
 		    else
 			tile.fill();
@@ -183,7 +183,7 @@ public class PegSolitaireApp extends Application {
 	    for (int j = 0; j < 7; j++) {
 		final BoardTile tile = tilesBoard[i][j];
 		if (game.getBoard().getHoles()[i][j].isEnabled())
-		    if (game.getBoard().getHoles()[i][j].isHasPeg())
+		    if (game.getBoard().getHoles()[i][j].hasPeg())
 			tile.fill(Color.BLUEVIOLET);
 		    else
 			tile.fill();
