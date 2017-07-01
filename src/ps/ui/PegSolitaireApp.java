@@ -1,6 +1,7 @@
 package ps.ui;
 
 import java.util.logging.Logger;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -8,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -25,6 +27,8 @@ public class PegSolitaireApp extends Application {
 
     private static final Logger LOGGER = Logger.getLogger(PegSolitaireApp.class.getName());
 
+    private static final int TILE_SIZE = 80;
+
     private GameEngine game;
     private BoardTile[][] tilesBoard = new BoardTile[7][7];
     private Pane root = new Pane();
@@ -32,16 +36,67 @@ public class PegSolitaireApp extends Application {
     private BoardTile initialPosition;
     private BoardTile finalPosition;
 
+    private Label printArea;
+
     private Parent createContent() {
-	root.setPrefSize(700, 700);
+	root.setPrefSize(12 * TILE_SIZE, 9 * TILE_SIZE);
+	root.setStyle("-fx-background-color: #ffffff;");
 	game = new GameEngine();
 
 	LOGGER.info("Drawing board");
+	createPositionsIndexes();
+	createBoardTiles();
+	createButtons();
+	createPrintArea();
+
+	return root;
+    }
+
+    private void createPrintArea() {
+	Label printArea = new Label("");
+	printArea.setMaxWidth(TILE_SIZE * 3);
+	printArea.setMaxHeight(TILE_SIZE * 5);
+	printArea.setWrapText(true);
+	printArea.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 20; -fx-text-fill: darkred;");
+	printArea.setTranslateX(TILE_SIZE * 9);
+	printArea.setTranslateY(TILE_SIZE * 3);
+	root.getChildren().add(printArea);
+    }
+
+    private void createButtons() {
+	Button restartButton = new Button("Reiniciar");
+	restartButton.setTranslateX(TILE_SIZE * 9);
+	restartButton.setTranslateY(TILE_SIZE);
+	restartButton.setOnAction(actionEvent -> {
+	    game = new GameEngine();
+	    Platform.runLater(this::redrawMap);
+	});
+
+	Button undoButton = new Button("Deshacer");
+	undoButton.setTranslateX(TILE_SIZE * 10);
+	undoButton.setTranslateY(TILE_SIZE);
+	undoButton.setOnAction(actionEvent -> {
+	    game = new GameEngine();
+	    Platform.runLater(this::redrawMap);
+	});
+
+	Button movesButton = new Button("Mostrar jugadas");
+	movesButton.setTranslateX(TILE_SIZE * 9);
+	movesButton.setTranslateY(TILE_SIZE * 2);
+	movesButton.setOnAction(actionEvent -> {
+	    game = new GameEngine();
+	    Platform.runLater(this::redrawMap);
+	});
+
+	root.getChildren().addAll(restartButton, undoButton, movesButton);
+    }
+
+    private void createBoardTiles() {
 	for (int i = 0; i < 7; i++) {
 	    for (int j = 0; j < 7; j++) {
 		BoardTile tile = new BoardTile();
-		tile.setTranslateX(i * 100);
-		tile.setTranslateY(j * 100);
+		tile.setTranslateX((i + 1) * TILE_SIZE);
+		tile.setTranslateY((j + 1) * TILE_SIZE);
 		tile.getPosition().setX(i);
 		tile.getPosition().setY(j);
 		root.getChildren().add(tile);
@@ -53,8 +108,24 @@ public class PegSolitaireApp extends Application {
 		tilesBoard[i][j] = tile;
 	    }
 	}
+    }
 
-	return root;
+    private void createPositionsIndexes() {
+	for (int i = 0; i < 7; i++) {
+	    BoardTile hTile = new BoardTile();
+	    hTile.setTranslateX((i + 1) * TILE_SIZE);
+	    hTile.setTranslateY(0);
+	    hTile.fill(String.valueOf(i), Color.ALICEBLUE);
+	    hTile.getBoardBorder().setStroke(Color.WHITE);
+
+	    BoardTile vTile = new BoardTile();
+	    vTile.setTranslateX(0 * TILE_SIZE);
+	    vTile.setTranslateY((i + 1) * TILE_SIZE);
+	    vTile.fill(String.valueOf(i), Color.ALICEBLUE);
+	    vTile.getBoardBorder().setStroke(Color.WHITE);
+
+	    root.getChildren().addAll(hTile, vTile);
+	}
     }
 
     @Override
@@ -72,24 +143,29 @@ public class PegSolitaireApp extends Application {
 
 	if (game.isOver()) {
 	    LOGGER.info("GAME OVER");
-	    Stage dialogStage = new Stage();
-	    dialogStage.initModality(Modality.WINDOW_MODAL);
-
-	    Button restartButton = new Button("Reiniciar");
-	    VBox vbox = new VBox(new Text("FELICITACIONES"), restartButton);
-	    vbox.setAlignment(Pos.CENTER);
-	    vbox.setPadding(new Insets(15));
-
-	    restartButton.setOnAction(actionEvent -> {
-		game = new GameEngine();
-		Platform.runLater(this::redrawMap);
-		dialogStage.close();
-	    });
-
-	    dialogStage.setScene(new Scene(vbox));
-	    dialogStage.show();
+	    displaySuccessModal();
 	}
 
+    }
+
+    private void displaySuccessModal() {
+	Stage dialogStage = new Stage();
+	dialogStage.initModality(Modality.WINDOW_MODAL);
+
+	Button restartButton = new Button("Reiniciar");
+	VBox vbox = new VBox(new Text("FELICITACIONES"), restartButton);
+	vbox.setSpacing(20);
+	vbox.setAlignment(Pos.CENTER);
+	vbox.setPadding(new Insets(25));
+
+	restartButton.setOnAction(actionEvent -> {
+	game = new GameEngine();
+	Platform.runLater(this::redrawMap);
+	dialogStage.close();
+	});
+
+	dialogStage.setScene(new Scene(vbox));
+	dialogStage.show();
     }
 
     private void redrawMap() {
@@ -108,14 +184,15 @@ public class PegSolitaireApp extends Application {
     private class BoardTile extends StackPane {
 	private Text text = new Text();
 	private Position position = new Position();
+	private Rectangle boardBorder;
 
 	public BoardTile() {
-	    Rectangle border = new Rectangle(100, 100);
-	    border.setFill(null);
-	    border.setStroke(Color.BLACK);
-	    text.setFont(Font.font(72));
+	    boardBorder = new Rectangle(TILE_SIZE, TILE_SIZE);
+	    boardBorder.setFill(null);
+	    boardBorder.setStroke(Color.BLACK);
+	    text.setFont(Font.font(72 * TILE_SIZE / 100));
 	    setAlignment(Pos.CENTER);
-	    getChildren().addAll(border, text);
+	    getChildren().addAll(boardBorder, text);
 	    setOnMouseClicked(event -> {
 		if (event.getButton() == MouseButton.PRIMARY) {
 		    if (!game.getBoard().getHoles()[position.getX()][position.getY()].isEnabled())
@@ -141,8 +218,17 @@ public class PegSolitaireApp extends Application {
 	    text.setText("O");
 	}
 
+	public void fill(String tileText, Color color) {
+	    text.setFill(color);
+	    text.setText(tileText);
+	}
+
 	private Position getPosition() {
 	    return position;
+	}
+
+	private Rectangle getBoardBorder() {
+	    return boardBorder;
 	}
 
     }
