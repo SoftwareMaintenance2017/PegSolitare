@@ -21,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ps.engine.GameEngine;
+import ps.engine.model.PegMove;
 import ps.engine.model.Position;
 
 public class PegSolitaireApp extends Application {
@@ -53,7 +54,7 @@ public class PegSolitaireApp extends Application {
     }
 
     private void createPrintArea() {
-	Label printArea = new Label("");
+	printArea = new Label("");
 	printArea.setMaxWidth(TILE_SIZE * 3);
 	printArea.setMaxHeight(TILE_SIZE * 5);
 	printArea.setWrapText(true);
@@ -64,7 +65,7 @@ public class PegSolitaireApp extends Application {
     }
 
     private void createButtons() {
-	Button restartButton = new Button("Reiniciar");
+	Button restartButton = new Button("Rstart game");
 	restartButton.setTranslateX(TILE_SIZE * 9);
 	restartButton.setTranslateY(TILE_SIZE);
 	restartButton.setOnAction(actionEvent -> {
@@ -72,19 +73,19 @@ public class PegSolitaireApp extends Application {
 	    Platform.runLater(this::redrawMap);
 	});
 
-	Button undoButton = new Button("Deshacer");
+	Button undoButton = new Button("Undo move");
 	undoButton.setTranslateX(TILE_SIZE * 10);
 	undoButton.setTranslateY(TILE_SIZE);
 	undoButton.setOnAction(actionEvent -> {
-	    game = new GameEngine();
+	    game.undoMove();
 	    Platform.runLater(this::redrawMap);
 	});
 
-	Button movesButton = new Button("Mostrar jugadas");
+	Button movesButton = new Button("Display moves");
 	movesButton.setTranslateX(TILE_SIZE * 9);
 	movesButton.setTranslateY(TILE_SIZE * 2);
 	movesButton.setOnAction(actionEvent -> {
-	    game = new GameEngine();
+	    displayMoves();
 	    Platform.runLater(this::redrawMap);
 	});
 
@@ -95,8 +96,8 @@ public class PegSolitaireApp extends Application {
 	for (int i = 0; i < 7; i++) {
 	    for (int j = 0; j < 7; j++) {
 		BoardTile tile = new BoardTile();
-		tile.setTranslateX((i + 1) * TILE_SIZE);
-		tile.setTranslateY((j + 1) * TILE_SIZE);
+		tile.setTranslateX((j + 1) * TILE_SIZE);
+		tile.setTranslateY((i + 1) * TILE_SIZE);
 		tile.getPosition().setX(i);
 		tile.getPosition().setY(j);
 		root.getChildren().add(tile);
@@ -115,17 +116,24 @@ public class PegSolitaireApp extends Application {
 	    BoardTile hTile = new BoardTile();
 	    hTile.setTranslateX((i + 1) * TILE_SIZE);
 	    hTile.setTranslateY(0);
-	    hTile.fill(String.valueOf(i), Color.ALICEBLUE);
+	    hTile.fill(String.valueOf(i), Color.AQUAMARINE);
 	    hTile.getBoardBorder().setStroke(Color.WHITE);
 
 	    BoardTile vTile = new BoardTile();
 	    vTile.setTranslateX(0 * TILE_SIZE);
 	    vTile.setTranslateY((i + 1) * TILE_SIZE);
-	    vTile.fill(String.valueOf(i), Color.ALICEBLUE);
+	    vTile.fill(String.valueOf(i), Color.AQUAMARINE);
 	    vTile.getBoardBorder().setStroke(Color.WHITE);
 
 	    root.getChildren().addAll(hTile, vTile);
 	}
+    }
+
+    private void displayMoves() {
+	StringBuilder movementsBuilder = new StringBuilder("Movements:");
+	for (PegMove move : game.getMoveHistory())
+	    movementsBuilder.append("\n").append(move);
+	printArea.setText(movementsBuilder.toString());
     }
 
     @Override
@@ -134,7 +142,7 @@ public class PegSolitaireApp extends Application {
 	primaryStage.show();
     }
 
-    private void checkCurrentMove() {
+    private void validateMove() {
 	LOGGER.info("Updating board with new move");
 	game.movePeg(initialPosition.getPosition(), finalPosition.getPosition());
 	redrawMap();
@@ -151,18 +159,26 @@ public class PegSolitaireApp extends Application {
     private void displaySuccessModal() {
 	Stage dialogStage = new Stage();
 	dialogStage.initModality(Modality.WINDOW_MODAL);
+	dialogStage.setTitle("Peg solitaire");
 
-	Button restartButton = new Button("Reiniciar");
-	VBox vbox = new VBox(new Text("FELICITACIONES"), restartButton);
+	Button restartButton = new Button("Display moves");
+	restartButton.setOnAction(actionEvent -> {
+	    displayMoves();
+	    Platform.runLater(this::redrawMap);
+	    dialogStage.close();
+	});
+
+	Button historyButton = new Button("Restar game");
+	historyButton.setOnAction(actionEvent -> {
+	    game = new GameEngine();
+	    Platform.runLater(this::redrawMap);
+	    dialogStage.close();
+	});
+
+	VBox vbox = new VBox(new Text("CONGRATULATIONS"), historyButton, restartButton);
 	vbox.setSpacing(20);
 	vbox.setAlignment(Pos.CENTER);
 	vbox.setPadding(new Insets(25));
-
-	restartButton.setOnAction(actionEvent -> {
-	game = new GameEngine();
-	Platform.runLater(this::redrawMap);
-	dialogStage.close();
-	});
 
 	dialogStage.setScene(new Scene(vbox));
 	dialogStage.show();
@@ -202,7 +218,7 @@ public class PegSolitaireApp extends Application {
 			initialPosition = this;
 		    else {
 			finalPosition = this;
-			checkCurrentMove();
+			validateMove();
 		    }
 		}
 	    });

@@ -1,6 +1,6 @@
 package ps.engine;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,16 +15,17 @@ public class GameEngine {
 
     private Board board;
 
+    private final List<PegMove> moveHistory = new ArrayList<>();
+
     public GameEngine() {
 	this.newGame();
     }
 
-	/**
-	 * Start a new game with the LATIN CROSS board.
-	 */
-	public void newGame() {
-		this.newGame(PrebuildBoard.LATIN_CROSS);
-
+    /**
+     * Start a new game with the LATIN CROSS board.
+     */
+    public void newGame() {
+	this.newGame(PrebuildBoard.LATIN_CROSS);
     }
 
     public void movePeg(Position originalPosition, Position finalPosition) {
@@ -36,6 +37,16 @@ public class GameEngine {
 	board.getHoles()[originalPosition.getX()][originalPosition.getY()].setHasPeg(false);
 	board.getHoles()[finalPosition.getX()][finalPosition.getY()].setHasPeg(true);
 
+	if (!moveHistory.isEmpty() && moveHistory.get(moveHistory.size() - 1).getLastPosition().equals(originalPosition)) {
+	    moveHistory.get(moveHistory.size() - 1).getPositions().add(finalPosition);
+	    LOGGER.info("Adding aditional position to last move");
+	} else {
+	    PegMove move = new PegMove(originalPosition, finalPosition);
+	    moveHistory.add(move);
+	    LOGGER.info("Adding new move to history");
+	}
+
+	LOGGER.info("Registering move " + moveHistory.get(moveHistory.size() - 1));
     }
 
     private boolean validateMovement(Position originalPosition, Position finalPosition) {
@@ -106,36 +117,52 @@ public class GameEngine {
 	    }
 	}
 
-	
-		return pegs == 1;
-	}
+	return pegs == 1;
+    }
 
-	/**
-	 * Undo the last peg move.
-	 */
-	public void undoMove() {
-		// Unimplemented
-	}
+    /**
+     * Undo the last peg move.
+     */
+    public void undoMove() {
+	if (moveHistory.isEmpty())
+	    return;
 
-	/**
-	 * Get the list of all peg moves done during the session game.
-	 * 
-	 * @return the peg move list
-	 * @see PegMove
-	 */
-	public List<PegMove> moveHistory() {
-		return Collections.emptyList();
-	}
+	PegMove lastMove = moveHistory.get(moveHistory.size() - 1);
+	Position firstPosition = lastMove.getPositions().get(0);
+	Position lastPosition;
 
-	/**
-	 * Start a new game with the given board.
-	 * 
-	 * @param prebuildBoard
-	 */
-	public void newGame(PrebuildBoard prebuildBoard) {
-		board = new Board();
-		board = BoardLoader.loadBoard(prebuildBoard);
-
+	board.getHoles()[firstPosition.getX()][firstPosition.getY()].setHasPeg(true);
+	LOGGER.info("Undoing move " + lastMove);
+	for (int i = 1; i < lastMove.getPositions().size(); i++) {
+	    lastPosition = lastMove.getPositions().get(i);
+	    board.getHoles()[lastPosition.getX()][lastPosition.getY()].setHasPeg(false);
+	    int midHoleXPosition = (firstPosition.getX() + lastPosition.getX()) / 2;
+	    int midHoleYPosition = (firstPosition.getY() + lastPosition.getY()) / 2;
+	    board.getHoles()[midHoleXPosition][midHoleYPosition].setHasPeg(true);
+	    firstPosition = lastPosition;
 	}
+	moveHistory.remove(lastMove);
+    }
+
+    /**
+     * Get the list of all peg moves done during the session game.
+     * 
+     * @return the peg move list
+     * @see PegMove
+     */
+    public List<PegMove> getMoveHistory() {
+	return moveHistory;
+    }
+
+    /**
+     * Start a new game with the given board.
+     * 
+     * @param prebuildBoard
+     */
+    public void newGame(PrebuildBoard prebuildBoard) {
+	board = new Board();
+	board = BoardLoader.loadBoard(prebuildBoard);
+
+    }
 
 }
