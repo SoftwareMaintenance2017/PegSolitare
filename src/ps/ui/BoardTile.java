@@ -15,10 +15,10 @@ class BoardTile extends StackPane {
 	 */
 	private final PegSolitaireApp pegSolitaireApp;
 private Text text = new Text();
-private Position position = new Position();
+	private Position position;
 private Rectangle boardBorder;
 
-public BoardTile(PegSolitaireApp pegSolitaireApp) {
+	public BoardTile(PegSolitaireApp pegSolitaireApp) {
     this.pegSolitaireApp = pegSolitaireApp;
 	boardBorder = new Rectangle(PegSolitaireApp.TILE_SIZE, PegSolitaireApp.TILE_SIZE);
     boardBorder.setFill(null);
@@ -40,6 +40,11 @@ public BoardTile(PegSolitaireApp pegSolitaireApp) {
 	}
     });
 }
+
+	public BoardTile(PegSolitaireApp pegSolitaireApp, int x, int y) {
+		this(pegSolitaireApp);
+		this.position = new Position(x, y);
+	}
 
 public void fill() {
     text.setFill(Color.BLACK);

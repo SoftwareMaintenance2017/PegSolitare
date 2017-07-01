@@ -3,10 +3,15 @@
  */
 package ps.engine;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import ps.engine.model.Position;
 
 /**
  * 
@@ -45,6 +50,10 @@ public class GameEngineTest {
 	 */
 	@Test
 	public final void testMovePeg() {
+		game.newGame(PrebuildBoard.LATIN_CROSS);
+		Position originalPosition = new Position(3, 3);
+		Position finalPosition = new Position(5, 3);
+		game.movePeg(originalPosition, finalPosition);
 		fail("Not yet implemented"); // TODO
 	}
 

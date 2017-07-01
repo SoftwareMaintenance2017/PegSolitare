@@ -90,11 +90,10 @@ public class PegSolitaireApp extends Application {
     private void createBoardTiles() {
 	for (int i = 0; i < 7; i++) {
 	    for (int j = 0; j < 7; j++) {
-		BoardTile tile = new BoardTile(this);
+				BoardTile tile = new BoardTile(this, i, j);
 		tile.setTranslateX((j + 1) * TILE_SIZE);
 		tile.setTranslateY((i + 1) * TILE_SIZE);
-		tile.getPosition().setX(i);
-		tile.getPosition().setY(j);
+
 		root.getChildren().add(tile);
 		if (game.getBoard().getHoles()[i][j].isEnabled())
 		    if (game.getBoard().getHoles()[i][j].isHasPeg())

@@ -1,24 +1,25 @@
 package ps.engine.model;
 
+import java.util.Objects;
+
 public class Position {
 
     private int x;
     private int y;
 
-    public int getY() {
+	public Position(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	public int getY() {
 	return y;
     }
 
-    public void setY(int y) {
-	this.y = y;
-    }
+
 
     public int getX() {
 	return x;
-    }
-
-    public void setX(int x) {
-	this.x = x;
     }
 
     @Override
@@ -27,12 +28,20 @@ public class Position {
     }
 
     @Override
-    public boolean equals(Object object) {
-	if (object instanceof Position) {
-	Position other = (Position) object;
-	return other.x==this.x && other.y==this.y;
-	} else
-	    return false;
+	public boolean equals(Object other) {
+		if (other == this) {
+			return true;
+		}
+		if (!(other instanceof Position)) {
+			return false;
+		}
+		Position position = (Position) other;
+		return Objects.equals(this.x, position.x) && Objects.equals(this.y, position.y);
     }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(x, y);
+	}
 
 }

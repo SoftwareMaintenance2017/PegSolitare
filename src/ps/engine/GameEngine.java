@@ -17,6 +17,9 @@ public class GameEngine {
 
     private final List<PegMove> moveHistory = new ArrayList<>();
 
+	/**
+	 * Create a new instance with the default board.
+	 */
     public GameEngine() {
 	this.newGame();
     }
