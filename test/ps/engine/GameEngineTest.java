@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
+import ps.engine.model.Hole;
 import ps.engine.model.Position;
 
 /**
@@ -61,13 +62,17 @@ public class GameEngineTest {
 		Position finalPosition = new Position(5, 3);
 		game.movePeg(initialPosition, finalPosition);
 
-		assertTrue(game.getBoard().getHole(initialPosition).isEnabled());
-		assertTrue(game.getBoard().getHole(removedPegPosition).isEnabled());
-		assertTrue(game.getBoard().getHole(finalPosition).isEnabled());
+		Hole initialPegHole = game.getBoard().getHole(initialPosition);
+		assertTrue(initialPegHole.isEnabled());
+		assertFalse(initialPegHole.hasPeg());
 
-		assertFalse(game.getBoard().getHole(initialPosition).hasPeg());
-		assertFalse(game.getBoard().getHole(removedPegPosition).hasPeg());
-		assertTrue(game.getBoard().getHole(finalPosition).hasPeg());
+		Hole removedPegHole = game.getBoard().getHole(removedPegPosition);
+		assertTrue(removedPegHole.isEnabled());
+		assertFalse(removedPegHole.hasPeg());
+
+		Hole finalPegHole = game.getBoard().getHole(finalPosition);
+		assertTrue(finalPegHole.isEnabled());
+		assertTrue(finalPegHole.hasPeg());
 
 	}
 
@@ -80,9 +85,9 @@ public class GameEngineTest {
 		game.newGame(PrebuildBoard.PYRAMID);
 
 		Position initialPosition = new Position(3, 2);
-		Position firtRemovedPeg = new Position(2, 2);
+		Position firtRemovedPegPosition = new Position(2, 2);
 		Position middlePosition = new Position(1, 2);
-		Position secondRemovedPeg = new Position(1, 3);
+		Position secondRemovedPegPosition = new Position(1, 3);
 		Position finalPosition = new Position(1, 4);
 
 		game.movePeg(initialPosition, middlePosition);
@@ -90,13 +95,25 @@ public class GameEngineTest {
 
 		LOGGER.info("\n" + game.getBoard().toString());
 
-		assertTrue(game.getBoard().getHole(initialPosition).isEnabled());
-		assertTrue(game.getBoard().getHole(firtRemovedPeg).isEnabled());
-		assertTrue(game.getBoard().getHole(finalPosition).isEnabled());
+		Hole initialPegHole = game.getBoard().getHole(initialPosition);
+		assertTrue(initialPegHole.isEnabled());
+		assertFalse(initialPegHole.hasPeg());
 
-		assertFalse(game.getBoard().getHole(initialPosition).hasPeg());
-		assertFalse(game.getBoard().getHole(firtRemovedPeg).hasPeg());
-		assertTrue(game.getBoard().getHole(finalPosition).hasPeg());
+		Hole firstRemovedPegHole = game.getBoard().getHole(firtRemovedPegPosition);
+		assertTrue(firstRemovedPegHole.isEnabled());
+		assertFalse(firstRemovedPegHole.hasPeg());
+
+		Hole middlePegHole = game.getBoard().getHole(middlePosition);
+		assertTrue(middlePegHole.isEnabled());
+		assertFalse(middlePegHole.hasPeg());
+
+		Hole secondRemovedPegHole = game.getBoard().getHole(secondRemovedPegPosition);
+		assertTrue(secondRemovedPegHole.isEnabled());
+		assertFalse(secondRemovedPegHole.hasPeg());
+
+		Hole finalPegHole = game.getBoard().getHole(finalPosition);
+		assertTrue(finalPegHole.isEnabled());
+		assertTrue(finalPegHole.hasPeg());
 
 	}
 

@@ -31,20 +31,31 @@ public class GameEngine {
 	this.newGame(PrebuildBoard.LATIN_CROSS);
     }
 
-    public void movePeg(Position originalPosition, Position finalPosition) {
+	/**
+	 * Move a peg in the board from the initial position to the final position.
+	 * 
+	 * @param initialPosition
+	 * @param finalPosition
+	 */
+    public void movePeg(Position initialPosition, Position finalPosition) {
 
-	boolean validMovement = validateMovement(originalPosition, finalPosition);
+	boolean validMovement = validateMovement(initialPosition, finalPosition);
 	if (!validMovement)
 	    return;
 
-	board.getHoles()[originalPosition.getRow()][originalPosition.getColumn()].setHasPeg(false);
-	board.getHoles()[finalPosition.getRow()][finalPosition.getColumn()].setHasPeg(true);
+		board.getHole(initialPosition).setHasPeg(false);
 
-	if (!moveHistory.isEmpty() && moveHistory.get(moveHistory.size() - 1).getLastPosition().equals(originalPosition)) {
+		Hole middleHole = MovementValidator.getMiddleHole(board, initialPosition, finalPosition);
+
+		middleHole.setHasPeg(false);
+
+		board.getHole(finalPosition).setHasPeg(true);
+
+	if (!moveHistory.isEmpty() && moveHistory.get(moveHistory.size() - 1).getLastPosition().equals(initialPosition)) {
 	    moveHistory.get(moveHistory.size() - 1).getPositions().add(finalPosition);
 	    LOGGER.info("Adding aditional position to last move");
 	} else {
-	    PegMove move = new PegMove(originalPosition, finalPosition);
+	    PegMove move = new PegMove(initialPosition, finalPosition);
 	    moveHistory.add(move);
 	    LOGGER.info("Adding new move to history");
 	}
@@ -54,13 +65,14 @@ public class GameEngine {
 
     private boolean validateMovement(Position originalPosition, Position finalPosition) {
 	try {
-	    Hole originalHole = board.getHoles()[originalPosition.getRow()][originalPosition.getColumn()];
-	    Hole finalHole = board.getHoles()[finalPosition.getRow()][finalPosition.getColumn()];
+			Hole originalHole = board.getHole(originalPosition);
+			Hole finalHole = board.getHole(finalPosition);
 
-	    boolean valid = checkOriginalHole(originalHole);
-	    valid = valid && checkFinalHole(finalHole);
-	    valid = valid && checkCoherentMovement(originalPosition, finalPosition);
-	    valid = valid && checkValidMovement(originalPosition, finalPosition);
+			boolean valid = MovementValidator.checkOriginalHole(originalHole);
+			valid = valid && MovementValidator.checkFinalHole(finalHole);
+			valid = valid
+					&& MovementValidator.checkCoherentMovement(originalPosition, finalPosition);
+			valid = valid && MovementValidator.checkMidHole(board, originalPosition, finalPosition);
 
 	    return valid;
 	} catch (Exception e) {
@@ -69,42 +81,6 @@ public class GameEngine {
 	}
     }
 
-    private boolean checkValidMovement(Position originalPosition, Position finalPosition) {
-	int midHoleXPosition = (originalPosition.getRow() + finalPosition.getRow()) / 2;
-	int midHoleYPosition = (originalPosition.getColumn() + finalPosition.getColumn()) / 2;
-	Hole midHole = board.getHoles()[midHoleXPosition][midHoleYPosition];
-	if (midHole.hasPeg()) {
-	    midHole.setHasPeg(false);
-	    return true;
-	} else {
-	    LOGGER.info("There's no peg to remove, invalid movement");
-	    return false;
-	}
-    }
-
-    private boolean checkCoherentMovement(Position originalPosition, Position finalPosition) {
-	int xDisplacement = Math.abs(originalPosition.getRow() - finalPosition.getRow());
-	int yDisplacement = Math.abs(originalPosition.getColumn() - finalPosition.getColumn());
-	if ((xDisplacement == 0 && yDisplacement == 2) || (xDisplacement == 2 && yDisplacement == 0))
-	    return true;
-	LOGGER.info("Invalid displacement");
-	return false;
-
-    }
-
-    private boolean checkOriginalHole(Hole originalHole) {
-	if (originalHole.hasPeg() && originalHole.isEnabled())
-	    return true;
-	LOGGER.info("Disabled or no peg in first position");
-	return false;
-    }
-
-    private boolean checkFinalHole(Hole finalHole) {
-	if (!finalHole.hasPeg() && finalHole.isEnabled())
-	    return true;
-	LOGGER.info("Disabled or peg in final position");
-	return false;
-    }
 
     public Board getBoard() {
 	return board;

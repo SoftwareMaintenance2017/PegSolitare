@@ -27,7 +27,7 @@ public class Hole {
 	}
 
 	public boolean hasPeg() {
-		return hasPeg;
+		return this.isEnabled() && hasPeg;
 	}
 	
 	public void setHasPeg(boolean hasPeg) {
