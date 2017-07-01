@@ -5,20 +5,30 @@ package ps.engine;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author juan
+ * 
  *
  */
 public class GameEngineTest {
+
+	private GameEngine game;
+
+	@Before
+	public void initialize() {
+		game = new GameEngine();
+	}
 
 	/**
 	 * Test method for {@link ps.engine.GameEngine#GameEngine()}.
 	 */
 	@Test
 	public final void testGameEngine() {
-		fail("Not yet implemented"); // TODO
+		GameEngine game = new GameEngine();
+		assertNotNull(game);
+		assertNotNull(game.getBoard());
 	}
 
 	/**
@@ -26,7 +36,8 @@ public class GameEngineTest {
 	 */
 	@Test
 	public final void testNewGame() {
-		fail("Not yet implemented"); // TODO
+		game.newGame();
+		assertNotNull(game.getBoard());
 	}
 
 	/**
@@ -50,7 +61,10 @@ public class GameEngineTest {
 	 */
 	@Test
 	public final void testIsOver() {
-		fail("Not yet implemented"); // TODO
+		assertFalse(game.isOver());
+
+		game.newGame(PrebuildBoard.GAME_OVER);
+		assertTrue(game.isOver());
 	}
 
 	/**

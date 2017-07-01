@@ -25,9 +25,12 @@ public class PrebuildBoardTest {
 	 */
 	@Test
 	public final void testGetFile() {
-		File boardFile = ResourceLoader.getSavedFile(PrebuildBoard.LATIN_CROSS.getFile());
-		LOGGER.info(boardFile.getAbsolutePath());
-		assertTrue(boardFile.exists());
+		for (PrebuildBoard savedBoard : PrebuildBoard.values()) {
+			File boardFile = ResourceLoader.getSavedFile(savedBoard.getFile());
+			LOGGER.info(boardFile.getAbsolutePath());
+			assertTrue(boardFile.exists());
+		}
+
 	}
 
 }

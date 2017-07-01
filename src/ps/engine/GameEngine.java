@@ -19,10 +19,11 @@ public class GameEngine {
 	this.newGame();
     }
 
-    public void newGame() {
-	board = new Board();
-
-		board = BoardLoader.loadBoard(PrebuildBoard.LATIN_CROSS);
+	/**
+	 * Start a new game with the LATIN CROSS board.
+	 */
+	public void newGame() {
+		this.newGame(PrebuildBoard.LATIN_CROSS);
 
     }
 
@@ -124,6 +125,17 @@ public class GameEngine {
 	 */
 	public List<PegMove> moveHistory() {
 		return Collections.emptyList();
+	}
+
+	/**
+	 * Start a new game with the given board.
+	 * 
+	 * @param prebuildBoard
+	 */
+	public void newGame(PrebuildBoard prebuildBoard) {
+		board = new Board();
+		board = BoardLoader.loadBoard(prebuildBoard);
+
 	}
 
 }
