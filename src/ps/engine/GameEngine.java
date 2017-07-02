@@ -136,6 +136,7 @@ public class GameEngine {
      */
     public void newGame(PrebuildBoard prebuildBoard) {
 	board = BoardLoader.loadBoard(prebuildBoard);
+		this.moveHistory.clear();
     }
 
 }

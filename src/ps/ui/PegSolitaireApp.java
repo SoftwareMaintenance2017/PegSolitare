@@ -43,7 +43,7 @@ public class PegSolitaireApp extends Application {
 		LOGGER.info("Drawing board");
 
 		game = new GameEngine();
-		game.newGame(PrebuildBoard.PYRAMID);
+		game.newGame();
 
 		createPositionsIndexes();
 		createBoardTiles();
@@ -170,9 +170,9 @@ public class PegSolitaireApp extends Application {
 			dialogStage.close();
 		});
 
-		Button historyButton = new Button("New game");
+		Button historyButton = new Button("Other board");
 		historyButton.setOnAction(actionEvent -> {
-			game.newGame();
+			game.newGame(PrebuildBoard.PYRAMID);
 			Platform.runLater(this::redrawMap);
 			dialogStage.close();
 		});
