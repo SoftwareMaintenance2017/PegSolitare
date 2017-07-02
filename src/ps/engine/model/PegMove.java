@@ -31,7 +31,7 @@ public class PegMove {
      * @return the positions
      */
     public Position getLastPosition() {
-	if (positions.size() == 0)
+		if (positions.isEmpty())
 	    return null;
 	return positions.get(positions.size() - 1);
     }
