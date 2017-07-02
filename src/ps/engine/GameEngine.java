@@ -103,24 +103,20 @@ public class GameEngine {
      * Undo the last peg move.
      */
     public void undoMove() {
-	if (moveHistory.isEmpty())
-	    return;
+		if (moveHistory.isEmpty())
+			return;
 
-	PegMove lastMove = moveHistory.get(moveHistory.size() - 1);
-	Position firstPosition = lastMove.getPositions().get(0);
-	Position lastPosition;
+		PegMove lastMove = moveHistory.get(moveHistory.size() - 1);
+		Position firstPosition = lastMove.getPositions().get(0);
 
-	board.getHoles()[firstPosition.getRow()][firstPosition.getColumn()].setHasPeg(true);
-	LOGGER.info("Undoing move " + lastMove);
-	for (int i = 1; i < lastMove.getPositions().size(); i++) {
-	    lastPosition = lastMove.getPositions().get(i);
-	    board.getHoles()[lastPosition.getRow()][lastPosition.getColumn()].setHasPeg(false);
-	    int midHoleXPosition = (firstPosition.getRow() + lastPosition.getRow()) / 2;
-	    int midHoleYPosition = (firstPosition.getColumn() + lastPosition.getColumn()) / 2;
-	    board.getHoles()[midHoleXPosition][midHoleYPosition].setHasPeg(true);
-	    firstPosition = lastPosition;
-	}
-	moveHistory.remove(lastMove);
+		board.getHole(firstPosition).setHasPeg(true);
+		LOGGER.info("Undoing move " + lastMove);
+		for (Position lastPosition : lastMove.getPositions()) {
+			board.getHole(lastPosition).setHasPeg(false);
+			MovementValidator.getMiddleHole(board, firstPosition, lastPosition).setHasPeg(true);
+			firstPosition = lastPosition;
+		}
+		moveHistory.remove(lastMove);
     }
 
     /**
@@ -139,9 +135,7 @@ public class GameEngine {
      * @param prebuildBoard
      */
     public void newGame(PrebuildBoard prebuildBoard) {
-	board = new Board();
 	board = BoardLoader.loadBoard(prebuildBoard);
-
     }
 
 }

@@ -17,185 +17,187 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ps.engine.GameEngine;
+import ps.engine.PrebuildBoard;
+import ps.engine.model.Hole;
 import ps.engine.model.PegMove;
 
 public class PegSolitaireApp extends Application {
 
-    private static final Logger LOGGER = Logger.getLogger(PegSolitaireApp.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(PegSolitaireApp.class.getName());
 
-    static final int TILE_SIZE = 80;
+	static final int TILE_SIZE = 80;
 
-    GameEngine game;
-    private BoardTile[][] tilesBoard = new BoardTile[7][7];
-    private Pane root = new Pane();
+	GameEngine game;
+	private BoardTile[][] tilesBoard = new BoardTile[7][7];
+	private Pane root = new Pane();
 
-    BoardTile initialPosition;
-    BoardTile finalPosition;
+	BoardTile initialPosition;
+	BoardTile finalPosition;
 
-    private Label printArea;
+	private Label printArea;
 
-    private Parent createContent() {
-	root.setPrefSize(12 * TILE_SIZE, 9 * TILE_SIZE);
-	root.setStyle("-fx-background-color: #ffffff;");
-	game = new GameEngine();
+	private Parent createContent() {
+		root.setPrefSize(12 * TILE_SIZE, 9 * TILE_SIZE);
+		root.setStyle("-fx-background-color: #ffffff;");
 
-	LOGGER.info("Drawing board");
-	createPositionsIndexes();
-	createBoardTiles();
-	createButtons();
-	createPrintArea();
+		LOGGER.info("Drawing board");
 
-	return root;
-    }
+		game = new GameEngine();
+		game.newGame(PrebuildBoard.PYRAMID);
 
-    private void createPrintArea() {
-	printArea = new Label("");
-	printArea.setMaxWidth(TILE_SIZE * 3);
-	printArea.setMaxHeight(TILE_SIZE * 5);
-	printArea.setWrapText(true);
-	printArea.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 20; -fx-text-fill: darkred;");
-	printArea.setTranslateX(TILE_SIZE * 9);
-	printArea.setTranslateY(TILE_SIZE * 3);
-	root.getChildren().add(printArea);
-    }
+		createPositionsIndexes();
+		createBoardTiles();
+		createButtons();
+		createPrintArea();
 
-    private void createButtons() {
-	Button restartButton = new Button("Rstart game");
-	restartButton.setTranslateX(TILE_SIZE * 9);
-	restartButton.setTranslateY(TILE_SIZE);
-	restartButton.setOnAction(actionEvent -> {
-	    game = new GameEngine();
-	    Platform.runLater(this::redrawMap);
-	});
+		return root;
+	}
 
-	Button undoButton = new Button("Undo move");
-	undoButton.setTranslateX(TILE_SIZE * 10);
-	undoButton.setTranslateY(TILE_SIZE);
-	undoButton.setOnAction(actionEvent -> {
-	    game.undoMove();
-	    Platform.runLater(this::redrawMap);
-	});
+	private void createPrintArea() {
+		printArea = new Label("");
+		printArea.setMaxWidth(TILE_SIZE * 3);
+		printArea.setMaxHeight(TILE_SIZE * 5);
+		printArea.setWrapText(true);
+		printArea
+				.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 20; -fx-text-fill: darkred;");
+		printArea.setTranslateX(TILE_SIZE * 9);
+		printArea.setTranslateY(TILE_SIZE * 3);
+		root.getChildren().add(printArea);
+	}
 
-	Button movesButton = new Button("Display moves");
-	movesButton.setTranslateX(TILE_SIZE * 9);
-	movesButton.setTranslateY(TILE_SIZE * 2);
-	movesButton.setOnAction(actionEvent -> {
-	    displayMoves();
-	    Platform.runLater(this::redrawMap);
-	});
+	private void createButtons() {
+		Button restartButton = new Button("Restart game");
+		restartButton.setTranslateX(TILE_SIZE * 9);
+		restartButton.setTranslateY(TILE_SIZE);
+		restartButton.setOnAction(actionEvent -> {
+			game.newGame();
+			Platform.runLater(this::redrawMap);
+		});
 
-	root.getChildren().addAll(restartButton, undoButton, movesButton);
-    }
+		Button undoButton = new Button("Undo move");
+		undoButton.setTranslateX(TILE_SIZE * 10);
+		undoButton.setTranslateY(TILE_SIZE);
+		undoButton.setOnAction(actionEvent -> {
+			game.undoMove();
+			Platform.runLater(this::redrawMap);
+		});
 
-    private void createBoardTiles() {
-	for (int i = 0; i < 7; i++) {
-	    for (int j = 0; j < 7; j++) {
+		Button movesButton = new Button("Display moves");
+		movesButton.setTranslateX(TILE_SIZE * 9);
+		movesButton.setTranslateY(TILE_SIZE * 2);
+		movesButton.setOnAction(actionEvent -> {
+			displayMoves();
+			Platform.runLater(this::redrawMap);
+		});
+
+		root.getChildren().addAll(restartButton, undoButton, movesButton);
+	}
+
+	private void createBoardTiles() {
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
 				BoardTile tile = new BoardTile(this, i, j);
-		tile.setTranslateX((j + 1) * TILE_SIZE);
-		tile.setTranslateY((i + 1) * TILE_SIZE);
+				tile.setTranslateX((j + 1) * TILE_SIZE);
+				tile.setTranslateY((i + 1) * TILE_SIZE);
 
-		root.getChildren().add(tile);
-		if (game.getBoard().getHoles()[i][j].isEnabled())
-		    if (game.getBoard().getHoles()[i][j].hasPeg())
-			tile.fill(Color.BLUEVIOLET);
-		    else
-			tile.fill();
-		tilesBoard[i][j] = tile;
-	    }
-	}
-    }
-
-    private void createPositionsIndexes() {
-	for (int i = 0; i < 7; i++) {
-	    BoardTile hTile = new BoardTile(this);
-	    hTile.setTranslateX((i + 1) * TILE_SIZE);
-	    hTile.setTranslateY(0);
-	    hTile.fill(String.valueOf(i), Color.AQUAMARINE);
-	    hTile.getBoardBorder().setStroke(Color.WHITE);
-
-	    BoardTile vTile = new BoardTile(this);
-	    vTile.setTranslateX(0 * TILE_SIZE);
-	    vTile.setTranslateY((i + 1) * TILE_SIZE);
-	    vTile.fill(String.valueOf(i), Color.AQUAMARINE);
-	    vTile.getBoardBorder().setStroke(Color.WHITE);
-
-	    root.getChildren().addAll(hTile, vTile);
-	}
-    }
-
-    private void displayMoves() {
-	StringBuilder movementsBuilder = new StringBuilder("Movements:");
-	for (PegMove move : game.getMoveHistory())
-	    movementsBuilder.append("\n").append(move);
-	printArea.setText(movementsBuilder.toString());
-    }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-	primaryStage.setScene(new Scene(createContent()));
-	primaryStage.show();
-    }
-
-    void validateMove() {
-	LOGGER.info("Updating board with new move");
-	game.movePeg(initialPosition.getPosition(), finalPosition.getPosition());
-	redrawMap();
-	initialPosition = null;
-	finalPosition = null;
-
-	if (game.isOver()) {
-	    LOGGER.info("GAME OVER");
-	    displaySuccessModal();
+				root.getChildren().add(tile);
+				Hole hole = game.getBoard().getHoles()[i][j];
+				if (hole.isEnabled()) {
+					if (hole.hasPeg())
+						tile.fill(Color.BLUEVIOLET);
+					else
+						tile.fill();
+				}
+				tilesBoard[i][j] = tile;
+			}
+		}
 	}
 
-    }
+	private void createPositionsIndexes() {
+		for (int i = 0; i < 7; i++) {
+			BoardTile hTile = new BoardTile(this);
+			hTile.setTranslateX((i + 1) * TILE_SIZE);
+			hTile.setTranslateY(0);
+			hTile.fill(String.valueOf(i), Color.AQUAMARINE);
+			hTile.getBoardBorder().setStroke(Color.WHITE);
 
-    private void displaySuccessModal() {
-	Stage dialogStage = new Stage();
-	dialogStage.initModality(Modality.WINDOW_MODAL);
-	dialogStage.setTitle("Peg solitaire");
+			BoardTile vTile = new BoardTile(this);
+			vTile.setTranslateX(0 * TILE_SIZE);
+			vTile.setTranslateY((i + 1) * TILE_SIZE);
+			vTile.fill(String.valueOf(i), Color.AQUAMARINE);
+			vTile.getBoardBorder().setStroke(Color.WHITE);
 
-	Button restartButton = new Button("Display moves");
-	restartButton.setOnAction(actionEvent -> {
-	    displayMoves();
-	    Platform.runLater(this::redrawMap);
-	    dialogStage.close();
-	});
-
-	Button historyButton = new Button("Restar game");
-	historyButton.setOnAction(actionEvent -> {
-	    game = new GameEngine();
-	    Platform.runLater(this::redrawMap);
-	    dialogStage.close();
-	});
-
-	VBox vbox = new VBox(new Text("CONGRATULATIONS"), historyButton, restartButton);
-	vbox.setSpacing(20);
-	vbox.setAlignment(Pos.CENTER);
-	vbox.setPadding(new Insets(25));
-
-	dialogStage.setScene(new Scene(vbox));
-	dialogStage.show();
-    }
-
-    private void redrawMap() {
-	for (int i = 0; i < 7; i++) {
-	    for (int j = 0; j < 7; j++) {
-		final BoardTile tile = tilesBoard[i][j];
-		if (game.getBoard().getHoles()[i][j].isEnabled())
-		    if (game.getBoard().getHoles()[i][j].hasPeg())
-			tile.fill(Color.BLUEVIOLET);
-		    else
-			tile.fill();
-	    }
+			root.getChildren().addAll(hTile, vTile);
+		}
 	}
-    }
 
-    public GameEngine getGame() {
-	return game;
-    }
+	private void displayMoves() {
+		StringBuilder movementsBuilder = new StringBuilder("Movements:");
+		for (PegMove move : game.getMoveHistory())
+			movementsBuilder.append("\n").append(move);
+		printArea.setText(movementsBuilder.toString());
+	}
 
-    public void setGame(GameEngine game) {
-	this.game = game;
-    }
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		primaryStage.setScene(new Scene(createContent()));
+		primaryStage.show();
+	}
+
+	void validateMove() {
+		LOGGER.info("Updating board with new move");
+		game.movePeg(initialPosition.getPosition(), finalPosition.getPosition());
+		redrawMap();
+		initialPosition = null;
+		finalPosition = null;
+
+		if (game.isOver()) {
+			LOGGER.info("GAME OVER");
+			displaySuccessModal();
+		}
+
+	}
+
+	private void displaySuccessModal() {
+		Stage dialogStage = new Stage();
+		dialogStage.initModality(Modality.WINDOW_MODAL);
+		dialogStage.setTitle("Peg solitaire");
+
+		Button restartButton = new Button("Display moves");
+		restartButton.setOnAction(actionEvent -> {
+			displayMoves();
+			Platform.runLater(this::redrawMap);
+			dialogStage.close();
+		});
+
+		Button historyButton = new Button("New game");
+		historyButton.setOnAction(actionEvent -> {
+			game.newGame();
+			Platform.runLater(this::redrawMap);
+			dialogStage.close();
+		});
+
+		VBox vbox = new VBox(new Text("CONGRATULATIONS"), historyButton, restartButton);
+		vbox.setSpacing(20);
+		vbox.setAlignment(Pos.CENTER);
+		vbox.setPadding(new Insets(25));
+
+		dialogStage.setScene(new Scene(vbox));
+		dialogStage.show();
+	}
+
+	private void redrawMap() {
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				final BoardTile tile = tilesBoard[i][j];
+				Hole hole = game.getBoard().getHoles()[i][j];
+				if (hole.isEnabled())
+					if (hole.hasPeg())
+						tile.fill(Color.BLUEVIOLET);
+					else
+						tile.fill();
+			}
+		}
+	}
+
 }
