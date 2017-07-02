@@ -1,14 +1,12 @@
 package ps.engine;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import ps.engine.model.Board;
 import ps.engine.model.Hole;
-import ps.engine.util.PegSolitareException;
 import ps.engine.util.ResourceLoader;
 
 public class BoardLoader {
@@ -50,7 +48,7 @@ public class BoardLoader {
 	 * @return
 	 */
 	public static Board loadBoard(PrebuildBoard prebuildBoard) {
-		File boardFile = ResourceLoader.getSavedFile(prebuildBoard.getFile());
+		InputStream boardFile = ResourceLoader.getAsInputSteamFile(prebuildBoard.getFile());
 		try (Scanner scanner = new Scanner(boardFile)) {
 
 			List<String> result = new ArrayList<>();
@@ -64,8 +62,6 @@ public class BoardLoader {
 
 			return loadBoard(result.toArray(new String[result.size()]));
 
-		} catch (IOException e) {
-			throw new PegSolitareException(e);
 		}
 
 	}
