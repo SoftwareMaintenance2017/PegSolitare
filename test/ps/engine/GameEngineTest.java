@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
+import ps.engine.model.Board;
 import ps.engine.model.Hole;
 import ps.engine.model.Position;
 
@@ -122,7 +123,8 @@ public class GameEngineTest {
 	 */
 	@Test
 	public final void testGetBoard() {
-		fail("Not yet implemented"); // TODO
+		Board board = game.getBoard();
+		assertNotNull(board);
 	}
 
 	/**
@@ -141,7 +143,38 @@ public class GameEngineTest {
 	 */
 	@Test
 	public final void testUndoMove() {
-		fail("Not yet implemented"); // TODO
+		game.newGame(PrebuildBoard.PYRAMID);
+
+		Position initialPosition = new Position(3, 2);
+		Position firtRemovedPegPosition = new Position(2, 2);
+		Position middlePosition = new Position(1, 2);
+		Position secondRemovedPegPosition = new Position(1, 3);
+		Position finalPosition = new Position(1, 4);
+
+		game.movePeg(initialPosition, middlePosition);
+		game.movePeg(middlePosition, finalPosition);
+
+		LOGGER.info("\n" + game.getBoard().toString());
+
+		game.undoMove();
+
+		Hole initialPegHole = game.getBoard().getHole(initialPosition);
+		assertTrue(initialPegHole.hasPeg());
+
+		Hole firstRemovedPegHole = game.getBoard().getHole(firtRemovedPegPosition);
+		assertTrue(firstRemovedPegHole.hasPeg());
+
+		Hole middlePegHole = game.getBoard().getHole(middlePosition);
+		assertFalse(middlePegHole.hasPeg());
+
+		Hole secondRemovedPegHole = game.getBoard().getHole(secondRemovedPegPosition);
+		assertTrue(secondRemovedPegHole.hasPeg());
+
+		Hole finalPegHole = game.getBoard().getHole(finalPosition);
+		assertFalse(finalPegHole.hasPeg());
+
+		LOGGER.info("\n" + game.getBoard().toString());
+
 	}
 
 	/**
